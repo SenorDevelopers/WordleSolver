@@ -1,0 +1,10 @@
+GRID_ROWS = 6 
+GRID_COLS = 5
+
+WINDOW_WIDTH = 660
+WINDOW_HEIGHT = 650
+WINDOW_TITLE = "Wordle Remastered"
+
+API_URL = "https://637df8239c2635df8f949c47.mockapi.io/WordleApi"
+GET_OPENER_ENDPOINT = "/opener"
+GET_NEXT_GUESS_ENDPOINT = "/nextguess"
