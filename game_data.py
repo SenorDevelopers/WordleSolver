@@ -1,5 +1,5 @@
 # Define an empty string matrix
-GAME_LETTERS = [
+game_letters = [
     ["A", "S", "T", "E", "R"],
     ["B", "O", "O", "S", "T"],
     ["J", "U", "N", "B", "Y"],
@@ -8,4 +8,4 @@ GAME_LETTERS = [
     ["", "", "", "", ""],
 ]
 
-WORD_TO_GUESS = "BOOST"
+word_to_guess = "BOOST"

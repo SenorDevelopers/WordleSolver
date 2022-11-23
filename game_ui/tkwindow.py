@@ -7,6 +7,7 @@ import sys
 sys.path.append('../')
 
 import game_data
+from game_data_manager import game_data_manager as manager
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -19,7 +20,7 @@ class App(customtkinter.CTk):
 
     def __init__(self):
         super().__init__()
-
+        self.manager = manager()
         self.title("Wordle Remastered")
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
         # Set fixed size
@@ -55,12 +56,12 @@ class App(customtkinter.CTk):
 
         self.button_1 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="New Game",
-                                                command=self.button_event)
+                                                command=self.new_game)
         self.button_1.grid(row=2, column=0, pady=10, padx=20)
 
         self.button_2 = customtkinter.CTkButton(master=self.frame_left,
                                                 text="Next Guess",
-                                                command=self.button_event)
+                                                command=self.next_guess)
         self.button_2.grid(row=3, column=0, pady=10, padx=20)
 
         self.label_mode = customtkinter.CTkLabel(master=self.frame_left, text="Appearance Mode:")
@@ -100,8 +101,15 @@ class App(customtkinter.CTk):
         self.optionmenu_1.set("Dark")
 
 
-    def button_event(self):
-        print("Button pressed")
+    def new_game(self):
+        self.manager.reset_game()
+        opener = self.manager.get_opener()
+        opener = opener.strip()
+        self.manager.set_new_guess(opener)
+        self.update_matrix_according_to_game_data()
+
+    def next_guess(self):
+        pass
 
     def change_appearance_mode(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
@@ -125,14 +133,14 @@ class App(customtkinter.CTk):
                 self.label_info_1.grid(column=column, row=row, padx=15, pady=15)
 
                 # Fill the grid with black labels -> from game_data.py
-                self.label_info_1.configure(text=f"{game_data.GAME_LETTERS[row][column]}")
+                self.label_info_1.configure(text=f"{game_data.game_letters[row][column]}")
 
                 # Change the color of the labels -> from game_data.py
-                if game_data.GAME_LETTERS[row][column] == "":
+                if game_data.game_letters[row][column] == "":
                     self.label_info_1.configure(fg_color=("grey", "gray38"))
-                elif game_data.GAME_LETTERS[row][column] in game_data.WORD_TO_GUESS and game_data.WORD_TO_GUESS[column] != game_data.GAME_LETTERS[row][column]:
+                elif game_data.game_letters[row][column] in game_data.word_to_guess and game_data.word_to_guess[column] != game_data.game_letters[row][column]:
                     self.label_info_1.configure(fg_color=("yellow", "gray38"))
-                elif game_data.WORD_TO_GUESS[column] == game_data.GAME_LETTERS[row][column]:
+                elif game_data.word_to_guess[column] == game_data.game_letters[row][column]:
                     self.label_info_1.configure(fg_color=("green", "gray38"))
                 else:
                     self.label_info_1.configure(fg_color=("white", "gray38"))
