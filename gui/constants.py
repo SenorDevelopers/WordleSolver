@@ -5,6 +5,6 @@ WINDOW_WIDTH = 660
 WINDOW_HEIGHT = 650
 WINDOW_TITLE = "Wordle Remastered"
 
-API_URL = "https://637df8239c2635df8f949c47.mockapi.io/WordleApi"
+API_URL = "https://localhost:7229"
 GET_OPENER_ENDPOINT = "/opener"
-GET_NEXT_GUESS_ENDPOINT = "/nextguess"
+GET_NEXT_GUESS_ENDPOINT = "/next-guess"

@@ -16,7 +16,18 @@ class State:
         self.__guess_history = []
 
     def get_opener(self):
-        return self.__http_service.get_opener()
+        print("AICI")
+        opener = self.__http_service.get_opener()        
+        for i in range(len(opener)):
+            self.__state[0][i] = opener[i]
+        self.__current_guess_count = 1
+        
+        cnt = 0
+        for c in "01201":
+            self.__patterns[0][cnt] = c 
+            cnt += 1
+
+        return opener
 
     def get_pattern(self, row, col):
         return self.__patterns[row][col]

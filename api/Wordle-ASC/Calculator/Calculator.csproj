@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Database\Model.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>
 

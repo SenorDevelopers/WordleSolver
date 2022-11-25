@@ -93,6 +93,7 @@ class MainWindow(customtkinter.CTk):
     def on_closing(self):
         self.destroy()
 
+
     def update(self):
         for row in range(GRID_COLS):
             for column in range(GRID_COLS):
@@ -104,6 +105,7 @@ class MainWindow(customtkinter.CTk):
                                                            fg_color=("white", "gray38"),
                                                            justify=tkinter.LEFT)
                 self.label_info_1.grid(column=column, row=row, padx=15, pady=15)
+                print(self.__state.get_state(row, column))
                 self.label_info_1.configure(text=f"{self.__state.get_state(row, column)}")
 
                 if self.__state.get_state(row, column) == "":
