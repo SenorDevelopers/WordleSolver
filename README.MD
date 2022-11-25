@@ -1,5 +1,8 @@
 ## Wordle Solver 
 
+![image](https://user-images.githubusercontent.com/43640455/204058097-cae2ffbf-0739-40c7-9fb1-bb53ec6fe9de.png)
+
+
 ### Team Members: 
 - Silvian Achim
 - Apostol-Ilie Daniel 
