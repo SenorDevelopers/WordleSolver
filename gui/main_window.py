@@ -1,6 +1,7 @@
 from constants import WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, GRID_ROWS, GRID_COLS
+from models.main_window_state import MainWindowState
+from services.base_guess_service import BaseGuessService
 import tkinter.messagebox
-from state import State
 import customtkinter
 import tkinter
 
@@ -8,10 +9,10 @@ customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue") 
 
 class MainWindow(customtkinter.CTk):
-
-    def __init__(self):
-        self.__state = State()
+    def __init__(self, state: MainWindowState, guess_service: BaseGuessService):
         super().__init__()
+        self.__state = state
+        self.__guess_service = guess_service
         self.__configure_window()   
         self.__configure_grid_layout()  
         self.__configure_left_frame()
@@ -34,10 +35,10 @@ class MainWindow(customtkinter.CTk):
         self.frame_left.grid_rowconfigure(8, minsize=20)    # empty row with minsize as spacing
         self.frame_left.grid_rowconfigure(11, minsize=10)  # empty row with minsize as spacing
 
-        self.label_1 = customtkinter.CTkLabel(master=self.frame_left,text="Worlde GUI",text_font=("Roboto Medium", -16))  # font name and size in px
+        self.label_1 = customtkinter.CTkLabel(master=self.frame_left,text="Options:",text_font=("Roboto Medium", -16))  # font name and size in px
         self.label_1.grid(row=1, column=0, pady=10, padx=10)
 
-        self.button_1 = customtkinter.CTkButton(master=self.frame_left,text="New Game",command=self.new_game)
+        self.button_1 = customtkinter.CTkButton(master=self.frame_left,text="Reset Game",command=self.__reset)
         self.button_1.grid(row=2, column=0, pady=10, padx=20)
 
         self.button_2 = customtkinter.CTkButton(master=self.frame_left,text="Next Guess",command=self.next_guess)
@@ -64,7 +65,7 @@ class MainWindow(customtkinter.CTk):
         self.frame_info.rowconfigure(0, weight=1)
         self.frame_info.columnconfigure(0, weight=1)
 
-        self.update()
+        self.__update()
 
         self.entry = customtkinter.CTkEntry(master=self.frame_right,width=120,placeholder_text="Enter your guess here")
         self.entry.grid(row=8, column=0, columnspan=2, pady=20, padx=20, sticky="we")
@@ -79,13 +80,26 @@ class MainWindow(customtkinter.CTk):
         self.frame_right = customtkinter.CTkFrame(master=self)
         self.frame_right.grid(row=0, column=1, sticky="nswe", padx=20, pady=20)
 
-    def new_game(self):
-        self.__state.reset_state()
-        self.__state.get_opener()
-        self.update()
+    def __reset(self) -> None:
+        self.__state.reset()
+        self.__update()
 
     def next_guess(self):
-        pass
+        if self.__state.get_current_iteration() == 0:
+            guess = self.__guess_service.get_opener()
+        else: 
+            guess = self.__guess_service.get_guess()
+        
+        self.__state.add_guess(guess)
+        if guess.guess_string == "THINK":
+            self.__state.add_pattern("10000")
+        elif guess.guess_string == "ABOUT":
+            self.__state.add_pattern("10001")
+        else: 
+            self.__state.add_pattern("22222")
+            
+        self.__update()
+        
 
     def change_appearance_mode(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
@@ -93,26 +107,38 @@ class MainWindow(customtkinter.CTk):
     def on_closing(self):
         self.destroy()
 
-
-    def update(self):
-        for row in range(GRID_COLS):
-            for column in range(GRID_COLS):
-                self.label_info_1 = customtkinter.CTkLabel(master=self.frame_info,
-                                                           text=" " ,
-                                                           height=50,
-                                                           width=50,
-                                                           corner_radius=6,
-                                                           fg_color=("white", "gray38"),
-                                                           justify=tkinter.LEFT)
-                self.label_info_1.grid(column=column, row=row, padx=15, pady=15)
-                print(self.__state.get_state(row, column))
-                self.label_info_1.configure(text=f"{self.__state.get_state(row, column)}")
-
-                if self.__state.get_state(row, column) == "":
-                    self.label_info_1.configure(fg_color=("grey", "gray38"))
-                elif self.__state.get_pattern(row, column) == "1":
-                    self.label_info_1.configure(fg_color=("yellow", "gray38"))
-                elif self.__state.get_pattern(row, column) == "2":
-                    self.label_info_1.configure(fg_color=("green", "gray38"))
-                else:
-                    self.label_info_1.configure(fg_color=("white", "gray38"))
+    def __clear(self) -> None:
+        for row in range(GRID_ROWS):
+            for col in range(GRID_COLS):
+                self.label_info_1 = customtkinter.CTkLabel(master=self.frame_info,text=" ",height=50,width=50,corner_radius=6,fg_color=("white", "gray38"),justify=tkinter.LEFT)
+                self.label_info_1.grid(column=col, row=row, padx=15, pady=15)
+                self.label_info_1.configure(fg_color=("grey", "gray38"))
+                
+    def __update(self) -> None:
+        self.__clear()
+        
+        guesses = self.__state.get_guesses()
+        for row in range(len(guesses)):
+            for col in range(GRID_COLS):
+                value = guesses[row].guess_string[col]
+                self.label_info_1 = customtkinter.CTkLabel(master=self.frame_info,text=" ",height=50,width=50,corner_radius=6,fg_color=("white", "gray38"),justify=tkinter.LEFT)
+                self.label_info_1.grid(column=col, row=row, padx=15, pady=15)
+                self.label_info_1.configure(text=value)
+            
+        patterns = self.__state.get_patterns()
+        for row in range(len(patterns)):
+            for col in range(GRID_COLS):
+                value = patterns[row][col]
+                self.label_info_1 = customtkinter.CTkLabel(master=self.frame_info,text=" ",height=50,width=50,corner_radius=6,fg_color=("white", "gray38"),justify=tkinter.LEFT)
+                self.label_info_1.grid(column=col, row=row, padx=15, pady=15)
+                self.label_info_1.configure(text=guesses[row].guess_string[col])
+                self.label_info_1.configure(fg_color=self.__get_label_color(value))
+                
+    def __get_label_color(self, value: str) -> tuple: 
+        if value == "0":
+            return ("white", "gray38")
+        if value == "1":
+            return ("yellow", "gray38")
+        if value == "2":
+           return ("green", "gray38")
+        return ("grey", "gray38")
