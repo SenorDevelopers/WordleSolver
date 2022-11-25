@@ -52,5 +52,12 @@ public class WordService
 	{
 		return await uoW.Words.FirstOrDefaultAsync(w => w.Text == text);
 	}
+
+	public static async Task<bool> AddAsync(Word word, UoW uoW)
+	{
+		await uoW.Words.AddAsync(word);
+
+		return await uoW.SaveChangesAsync() > 0;
+	}
 }
 

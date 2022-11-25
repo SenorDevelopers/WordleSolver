@@ -1,4 +1,5 @@
-﻿using Database;
+﻿using Calculation.Services;
+using Database;
 using Database.Entities;
 using Database.Enums;
 using Model.Models;
@@ -11,7 +12,6 @@ public static class Helper
 	{
 		var patterns = Constants.ALL_PATTERNS;
 		var possiblePatternsDictionary = patterns.ToDictionary(pattern => pattern.ToString(), _ => false);
-
 
 		foreach (var word in words)
 		{
@@ -39,7 +39,7 @@ public static class Helper
 		var copyWord = word.ToCharArray();
 		var copyAns = answer.ToCharArray();
 
-		if (answer.Length < 5 || word.Length < 5)
+		if (answer.Length != Constants.WORD_SIZE || word.Length != Constants.WORD_SIZE)
 		{
 			throw new Exception("Invalid parameters");
 		}
@@ -124,13 +124,11 @@ public static class Helper
 
 		foreach (var word in words!)
 		{
-			await uoW.Words.AddAsync(new Word
+			await WordService.AddAsync(new Word
 			{
 				Text = word
-			});
+			}, uoW);
 		}
-
-		await uoW.SaveChangesAsync();
 	}
 }
 

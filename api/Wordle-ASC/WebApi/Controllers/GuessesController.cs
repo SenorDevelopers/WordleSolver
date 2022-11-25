@@ -1,5 +1,6 @@
 ﻿using Database.Models;
 using Microsoft.AspNetCore.Mvc;
+using Model.Models;
 using WebApi.Services.Interfaces;
 
 namespace WebApi.Controllers;
@@ -29,8 +30,7 @@ public class GuessesController : ControllerBase
 	{
 		_logger.LogInformation(nameof(NextGuess) + " was called");
 
-		//TODO: Validation from Pattern Class
-		if (pattern.Length != 5)
+		if (!Pattern.IsValidPattern(pattern))
 		{
 			return BadRequest("Invalid pattern");
 		}
@@ -55,8 +55,7 @@ public class GuessesController : ControllerBase
 	{
 		_logger.LogInformation(nameof(NextGuess) + " was called");
 
-		//TODO: Validation from Pattern Class
-		if (pattern.Length != 5)
+		if (!Pattern.IsValidPattern(pattern))
 		{
 			return BadRequest("Invalid pattern");
 		}

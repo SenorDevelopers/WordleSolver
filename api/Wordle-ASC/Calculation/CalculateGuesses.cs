@@ -29,17 +29,16 @@ public class CalculateGuesses
 
 		await Task.Run(async () =>
 		{
-			var dbContext = new UoW();
+			var uoW = new UoW();
+
 			foreach (var pattern in possiblePatterns)
 			{
-				var previousGuess = await dbContext.Guesses.AddAsync(new Guess
+				var previousGuess = await GuessesService.AddGuessAsync(new Guess
 				{
 					GuessNumber = CURRENT_GUESS_NUMBER,
 					GuessString = opener,
 					Pattern = pattern.ToString()
-				});
-
-				await dbContext.SaveChangesAsync();
+				}, uoW);
 
 				var wordsNow = Helper.PossibleWays(opener, pattern, _wordsStrings);
 
@@ -50,8 +49,8 @@ public class CalculateGuesses
 
 				currentNumberOfThreads++;
 
-				var threadContext = new UoW();
-				tasks.Add(Guesses(CURRENT_GUESS_NUMBER + 1, pattern, wordsNow, previousGuess.Entity.Id, threadContext));
+				var threadUoW = new UoW();
+				tasks.Add(Guesses(CURRENT_GUESS_NUMBER + 1, pattern, wordsNow, previousGuess.Id, threadUoW));
 
 				if (currentNumberOfThreads < Constants.MAX_THREADS)
 				{
@@ -67,31 +66,29 @@ public class CalculateGuesses
 	}
 
 	private async Task Guesses(int currentGuessNumber, Pattern currentGuessPattern,
-		List<string> currentWords, Guid previousGuessId, UoW dbContext)
+		List<string> currentWords, Guid previousGuessId, UoW uoW)
 	{
 		await Task.Run(async () =>
 		{
-			var ans = await _entropyCalculation.GetMaximumEntropyWord(currentWords, currentGuessNumber == 2, dbContext);
+			var maxEntropyAnswer = await _entropyCalculation.GetMaximumEntropyWordInListAsync(currentWords, currentGuessNumber == Constants.MAX_IN_DEPTH_GUESSES, uoW);
 
-			var previousGuess = await dbContext.Guesses.AddAsync(new Guess
+			var previousGuess = await GuessesService.AddGuessAsync(new Guess
 			{
 				GuessNumber = currentGuessNumber,
-				GuessString = ans.Key,
+				GuessString = maxEntropyAnswer.Key,
 				Pattern = currentGuessPattern.ToString(),
 				PreviousGuessId = previousGuessId
-			});
-
-			await dbContext.SaveChangesAsync();
+			}, uoW);
 
 			if (currentGuessPattern.IsGuessed())
 			{
 				return;
 			}
 
-			var possiblePatterns = Helper.GetAllPatternsForAWord(ans.Key, currentWords);
+			var possiblePatterns = Helper.GetAllPatternsForAWord(maxEntropyAnswer.Key, currentWords);
 			foreach (var pattern in possiblePatterns)
 			{
-				var wordsNow = Helper.PossibleWays(ans.Key, pattern, currentWords);
+				var wordsNow = Helper.PossibleWays(maxEntropyAnswer.Key, pattern, currentWords);
 
 				if (wordsNow.Count == 0 || pattern.IsGuessed())
 				{
@@ -99,7 +96,7 @@ public class CalculateGuesses
 				}
 
 				await Guesses(currentGuessNumber + 1, pattern, wordsNow,
-					previousGuess.Entity.Id, dbContext);
+					previousGuess.Id, uoW);
 			}
 		});
 	}

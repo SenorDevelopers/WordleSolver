@@ -16,13 +16,13 @@ public class CalculateOpeners
 
 	public async Task CalculateAsync(int numberOfWords = Constants.TOTAL_WORDS_COUNT, bool inDepthCalculation = false)
 	{
-		var dbContext = new UoW();
-		var words = await WordService.GetAllWordsAsync(dbContext);
+		var uoW = new UoW();
+		var words = await WordService.GetAllWordsAsync(uoW);
 		words = words.OrderByDescending(w => w.Entropy).Take(numberOfWords).ToList();
 
 		var entropyCalculator = new EntropyCalculation();
 
-		var tasks = new List<Task>();
+		var tasksList = new List<Task>();
 
 		await Task.Run(async () =>
 		{
@@ -30,24 +30,24 @@ public class CalculateOpeners
 
 			foreach (var word in words)
 			{
-				tasks.Add(Task.Run(async () =>
+				tasksList.Add(Task.Run(async () =>
 				{
-					var uoW = new UoW();
+					var threadUoW = new UoW();
 					var entropy = entropyCalculator.EntropyCalculatorForWord(word.Text);
 
 					double average = 0;
 					if (inDepthCalculation)
 					{
-						average = await entropyCalculator.DepthCalculationForAWordAsync(word.Text, _wordsStrings, uoW);
+						average = await entropyCalculator.DepthCalculationForAWordAsync(word.Text, _wordsStrings, threadUoW);
 					}
 
 					entropy += average;
 
-					var wordDb = await WordService.GetWordByTextAsync(word.Text, uoW);
+					var wordEntity = await WordService.GetWordByTextAsync(word.Text, threadUoW);
 
-					wordDb!.Entropy = (decimal)entropy;
+					wordEntity!.Entropy = (decimal)entropy;
 
-					await uoW.SaveChangesAsync();
+					await threadUoW.SaveChangesAsync();
 				}));
 
 				currentNumberOfThreads++;
@@ -57,12 +57,12 @@ public class CalculateOpeners
 					continue;
 				}
 
-				await Task.WhenAll(tasks);
-				tasks.Clear();
+				await Task.WhenAll(tasksList);
+				tasksList.Clear();
 				currentNumberOfThreads = 0;
 			}
 		});
 
-		await Task.WhenAll(tasks);
+		await Task.WhenAll(tasksList);
 	}
 }

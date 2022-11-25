@@ -89,12 +89,12 @@ public class Pattern
 		return ans;
 	}
 
-	private static bool IsValidPattern(ICollection<MatchWays> pattern)
+	public static bool IsValidPattern(ICollection<MatchWays> pattern)
 	{
 		return pattern.Count == PATTERN_LENGTH;
 	}
 
-	private bool IsValidPattern(string pattern)
+	public static bool IsValidPattern(string pattern)
 	{
 		foreach (var chr in pattern)
 		{

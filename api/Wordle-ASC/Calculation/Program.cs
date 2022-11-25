@@ -24,9 +24,6 @@ public class Program
 
 	public static async Task Main()
 	{
-		Console.WriteLine("Hello World!");
-
-		//await Task.Delay(200);
 		await FullFlow();
 	}
 }
