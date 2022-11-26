@@ -23,7 +23,7 @@ class MainWindow(customtkinter.CTk):
         self.__configure_right_frame()
 
     def __configure_window(self):
-        self.title(WINDOW_TITLE)
+        self.title(WINDOW_TITLE + " " + self.__state.get_word_to_guess())
         self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         self.resizable(False, False)
         self.protocol("WM_DELETE_WINDOW", self.__on_closing) 
@@ -70,11 +70,18 @@ class MainWindow(customtkinter.CTk):
         self.frame_info.columnconfigure(0, weight=1)
 
         self.__update()
-
-        self.entry = customtkinter.CTkEntry(master=self.frame_right,width=120,placeholder_text="Enter your guess here")
-        self.entry.grid(row=8, column=0, columnspan=2, pady=20, padx=20, sticky="we")
-
-        self.optionmenu_1.set("Dark") 
+        
+        self.word_button = customtkinter.CTkButton(self.frame_right, text="Change word to guess", command=self.__handle_word_to_guess_change)
+        self.word_button.grid(row=8, column=0, columnspan=2, pady=20, padx=20, sticky="we")
+        
+        self.optionmenu_1.set("System") 
+        
+    def __handle_word_to_guess_change(self):
+        dialog = customtkinter.CTkInputDialog(text="Enter the new word")
+        new_word_to_guess = dialog.get_input().upper()
+        self.__state.set_word_to_guess(new_word_to_guess)
+        self.title(WINDOW_TITLE + " - " + self.__state.get_word_to_guess())
+        self.__reset()
 
     def __configure_grid_layout(self):
         self.grid_columnconfigure(1, weight=1)
@@ -119,7 +126,7 @@ class MainWindow(customtkinter.CTk):
         self.__clear()
         
         guesses = self.__state.get_guesses()
-        for row in range(len(guesses)):
+        for row in range(min(len(guesses), GRID_ROWS)):
             for col in range(GRID_COLS):
                 value = guesses[row].guess_string[col]
                 self.label_info_1 = customtkinter.CTkLabel(master=self.frame_info,text=" ",height=50,width=50,corner_radius=6,fg_color=("white", "gray38"),justify=tkinter.LEFT)
@@ -127,7 +134,7 @@ class MainWindow(customtkinter.CTk):
                 self.label_info_1.configure(text=value)
             
         patterns = self.__state.get_patterns()
-        for row in range(len(patterns)):
+        for row in range(min(len(patterns), GRID_ROWS)):
             for col in range(GRID_COLS):
                 value = patterns[row][col]
                 self.label_info_1 = customtkinter.CTkLabel(master=self.frame_info,text=" ",height=50,width=50,corner_radius=6,fg_color=("white", "gray38"),justify=tkinter.LEFT)
@@ -137,9 +144,9 @@ class MainWindow(customtkinter.CTk):
                 
     def __get_label_color(self, value: str) -> tuple: 
         if value == "0":
-            return ("white", "gray38")
+            return ("white", "white38")
         if value == "1":
-            return ("yellow", "gray38")
+            return ("yellow", "yellow38")
         if value == "2":
-           return ("green", "gray38")
-        return ("grey", "gray38")
+           return ("green", "green38")
+        return ("grey", "grey38")

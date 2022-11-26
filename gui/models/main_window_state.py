@@ -34,3 +34,6 @@ class MainWindowState:
 
     def get_last_guess_id(self) -> str:
        return "" if len(self.__guesses) == 0 else self.__guesses[-1].id
+   
+    def set_word_to_guess(self, new_word: str) -> None:
+        self.__word_to_guess = new_word 

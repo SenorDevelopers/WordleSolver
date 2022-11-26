@@ -21,5 +21,4 @@ class HttpGuessService(BaseGuessService):
         return API_URL + GET_OPENER_ENDPOINT
 
     def __next_guess_url(self, pattern, prev_id) -> str:
-        print(API_URL + GET_NEXT_GUESS_ENDPOINT + "/" + str(pattern) + "/" + str(prev_id))
         return API_URL + GET_NEXT_GUESS_ENDPOINT + "/" + str(pattern) + "/" + str(prev_id)
