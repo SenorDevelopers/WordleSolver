@@ -38,7 +38,7 @@ public class CalculateOpeners
 					double average = 0;
 					if (inDepthCalculation)
 					{
-						average = await entropyCalculator.DepthCalculationForAWordAsync(word.Text, _wordsStrings, threadUoW);
+						average = await DepthCalculation.DepthCalculationForAWordAsync(word.Text, _wordsStrings, threadUoW);
 					}
 
 					entropy += average;
