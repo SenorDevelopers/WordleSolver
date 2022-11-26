@@ -1,7 +1,7 @@
 from constants import WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, GRID_ROWS, GRID_COLS
 from services.base_feedback_service import BaseFeedbackService
 from services.base_guess_service import BaseGuessService
-from models.main_window_state import MainWindowState
+from models.state import State
 import tkinter.messagebox
 import customtkinter
 import tkinter
@@ -10,7 +10,7 @@ customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue") 
 
 class MainWindow(customtkinter.CTk):
-    def __init__(self, state: MainWindowState, guess_service: BaseGuessService, feedback_service: BaseFeedbackService):
+    def __init__(self, state: State, guess_service: BaseGuessService, feedback_service: BaseFeedbackService):
         super().__init__()
         
         self.__feedback_service = feedback_service
@@ -23,7 +23,7 @@ class MainWindow(customtkinter.CTk):
         self.__configure_right_frame()
 
     def __configure_window(self):
-        self.title(WINDOW_TITLE + " " + self.__state.get_word_to_guess())
+        self.title(WINDOW_TITLE + " - " + self.__state.get_word_to_guess())
         self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         self.resizable(False, False)
         self.protocol("WM_DELETE_WINDOW", self.__on_closing) 
