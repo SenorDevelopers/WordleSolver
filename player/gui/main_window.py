@@ -1,13 +1,16 @@
-from constants import WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, GRID_ROWS, GRID_COLS
+import time
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, GRID_ROWS, GRID_COLS, WINDOW_WON_DIALOG_HEIGHT, WINDOW_WON_DIALOG_TITLE, WINDOW_WON_DIALOG_WIDTH
 from services.base_feedback_service import BaseFeedbackService
 from services.base_guess_service import BaseGuessService
 from models.state import State
+
 import tkinter.messagebox
 import customtkinter
 import tkinter
 
 customtkinter.set_appearance_mode("System")  
-customtkinter.set_default_color_theme("blue") 
+customtkinter.set_default_color_theme("blue")
+
 
 class MainWindow(customtkinter.CTk):
     def __init__(self, state: State, guess_service: BaseGuessService, feedback_service: BaseFeedbackService):
@@ -42,7 +45,7 @@ class MainWindow(customtkinter.CTk):
         self.label_1 = customtkinter.CTkLabel(master=self.frame_left,text="Options:",text_font=("Roboto Medium", -16))  # font name and size in px
         self.label_1.grid(row=1, column=0, pady=10, padx=10)
 
-        self.button_1 = customtkinter.CTkButton(master=self.frame_left,text="Reset Game",command=self.__reset)
+        self.button_1 = customtkinter.CTkButton(master=self.frame_left,text="Reset Game",command=self.reset)
         self.button_1.grid(row=2, column=0, pady=10, padx=20)
 
         self.button_2 = customtkinter.CTkButton(master=self.frame_left,text="Next Guess",command=self.__next_guess)
@@ -81,7 +84,7 @@ class MainWindow(customtkinter.CTk):
         new_word_to_guess = dialog.get_input().upper()
         self.__state.set_word_to_guess(new_word_to_guess)
         self.title(WINDOW_TITLE + " - " + self.__state.get_word_to_guess())
-        self.__reset()
+        self.reset()
 
     def __configure_grid_layout(self):
         self.grid_columnconfigure(1, weight=1)
@@ -91,16 +94,17 @@ class MainWindow(customtkinter.CTk):
         self.frame_right = customtkinter.CTkFrame(master=self)
         self.frame_right.grid(row=0, column=1, sticky="nswe", padx=20, pady=20)
 
-    def __reset(self) -> None:
-        self.__state.reset()
-        self.__update()
-
+    
     def __next_guess(self):
         guess = self.__get_next_guess()
         pattern = self.__feedback_service.calculate(answer=self.__state.get_word_to_guess(), word=guess.guess_string)
        
         self.__state.add_pattern(pattern)
-        self.__state.add_guess(guess)   
+        self.__state.add_guess(guess)
+
+        if self.__determine_if_game_is_won():
+            # The game is won
+            self.__show_game_won_dialog()   
          
         self.__update()
     
@@ -108,6 +112,17 @@ class MainWindow(customtkinter.CTk):
         if self.__state.get_current_iteration() == 0:
             return self.__guess_service.get_opener()
         return self.__guess_service.get_guess(self.__state.get_last_pattern(), self.__state.get_last_guess_id())
+
+    def __determine_if_game_is_won(self):
+        if self.__state.get_current_iteration() == 0:
+            return False
+        else:
+            # Get the last guess in the guess list
+            guess = self.__state.get_guesses()[len(self.__state.get_guesses()) - 1].guess_string
+            return guess == self.__state.get_word_to_guess()
+
+    def __show_game_won_dialog(self):
+        dialog = GameWonWindow(self)
 
     def __change_appearance_mode(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
@@ -143,7 +158,6 @@ class MainWindow(customtkinter.CTk):
                 self.label_info_1.configure(fg_color=self.__get_label_color(value))
                 
     def __get_label_color(self, value: str) -> tuple:
-        
         if value == "0":
             return ("white")
         if value == "1":
@@ -151,3 +165,57 @@ class MainWindow(customtkinter.CTk):
         if value == "2":
            return ("green")
         return ("grey")
+
+    def reset(self) -> None:
+        self.__state.reset()
+        self.__update()
+
+
+
+class GameWonWindow(customtkinter.CTk):
+    def __init__(self, main_window):
+        super().__init__()
+        self.__mainWin = main_window
+        self.__configure_window()
+        self.__configure_frame()
+
+    def __configure_window(self):
+        self.title(WINDOW_WON_DIALOG_TITLE)
+        self.geometry(f"{WINDOW_WON_DIALOG_WIDTH}x{WINDOW_WON_DIALOG_HEIGHT}")
+        self.resizable(False, False)
+        self.protocol("WM_DELETE_WINDOW", self.__on_closing)
+
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+
+    def __configure_frame(self): 
+        self.frame_left = customtkinter.CTkFrame(master=self,width=WINDOW_WON_DIALOG_WIDTH,corner_radius=10)
+        self.frame_left.grid(row=0, column=0, sticky="nswe")
+
+        self.label_1 = customtkinter.CTkLabel(master=self.frame_left,text="You won the game!",text_font=("Roboto Medium", -16))  # font name and size in px
+        self.label_1.grid(row=1, column=0, pady=10, padx=10)
+
+        self.button_1 = customtkinter.CTkButton(master=self.frame_left,text="Try Again",command=self.reset_game)
+        self.button_1.grid(row=2, column=0, pady=10, padx=20)
+
+        self.button_2 = customtkinter.CTkButton(master=self.frame_left,text="Quit",command=self.__quit)
+        self.button_2.grid(row=3, column=0, pady=10, padx=20)
+
+    def __on_closing(self) -> None:
+        self.destroy()
+        exit()
+    
+    def reset_game(self) -> None:
+        try:
+            self.__mainWin.reset() # Click animation error bug
+            self.destroy()
+        except Exception as e:
+            pass
+    
+    def __quit(self) -> None:
+        self.destroy()
+        exit()
+    
+
+
+
