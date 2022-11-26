@@ -1,0 +1,35 @@
+version: '3.4'
+
+networks:
+    web-api:
+
+services:
+    webApiDb:
+        container_name: web-api-db
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+            - 1433:1433
+        environment:
+            - ACCEPT_EULA=Y
+            - MSSQL_SA_PASSWORD=password@12345#
+            - MSSQL_PID=Express
+        networks:
+            - web-api
+    webapi:
+        container_name: web-api-container
+        image: ${DOCKER_REGISTRY-}webapi
+        build:
+          context: .
+          dockerfile: WebApi/Dockerfile
+        ports:
+            - 8001:80
+        depends_on: 
+            - webApiDb
+        environment:
+            - DatabaseServer=webApiDb
+            - DatabasePort=1433
+            - DatabaserUser=SA
+            - DatabasePassword=password@12345#
+            - DatabaseName=Wordle3
+        networks:
+            - web-api

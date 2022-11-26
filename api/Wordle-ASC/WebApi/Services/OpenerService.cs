@@ -1,4 +1,5 @@
 ﻿using Database;
+using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Services.Interfaces;
 
@@ -22,6 +23,17 @@ public class OpenerService : IOpenerService
 		_logger.LogInformation($"The maximum entropy word read from the database is: {word?.Text}");
 
 		return word?.Text;
+	}
+
+	public async Task AddOpener()
+	{
+		_uoW.Words.Add(new Word()
+		{
+			Text = "HEY",
+			Entropy = 30
+		});
+
+		await _uoW.SaveChangesAsync();
 	}
 }
 

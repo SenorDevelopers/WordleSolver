@@ -36,4 +36,15 @@ public class OpenerController : ControllerBase
 		_logger.LogInformation($"Successfully returned the opener {word}");
 		return Ok(word);
 	}
+
+
+	[HttpPost]
+	public async Task<ActionResult<string>> AddOpener()
+	{
+		_logger.LogInformation(nameof(Opener) + " was called");
+
+		await _openerService.AddOpener();
+
+		return Ok();
+	}
 }

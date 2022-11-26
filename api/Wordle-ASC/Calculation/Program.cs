@@ -24,7 +24,15 @@ public class Program
 
 	public static async Task Main()
 	{
-		await FullFlow();
+		//await FullFlow();
+
+		Console.WriteLine("Hello WOrld!");
+
+		var uoW = new UoW();
+
+		UoW.RestoreDatabase();
+
+		await Task.Delay(200);
 	}
 }
 

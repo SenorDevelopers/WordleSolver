@@ -3,5 +3,7 @@
 public interface IOpenerService
 {
 	Task<string?> GetMaxEntropyWordAsync();
+
+	Task AddOpener();
 }
 
