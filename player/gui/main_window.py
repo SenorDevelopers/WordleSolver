@@ -139,14 +139,15 @@ class MainWindow(customtkinter.CTk):
                 value = patterns[row][col]
                 self.label_info_1 = customtkinter.CTkLabel(master=self.frame_info,text=" ",height=50,width=50,corner_radius=6,fg_color=("white", "gray38"),justify=tkinter.LEFT)
                 self.label_info_1.grid(column=col, row=row, padx=15, pady=15)
-                self.label_info_1.configure(text=guesses[row].guess_string[col])
+                self.label_info_1.configure(text=guesses[row].guess_string[col], text_color=("black"))
                 self.label_info_1.configure(fg_color=self.__get_label_color(value))
                 
-    def __get_label_color(self, value: str) -> tuple: 
+    def __get_label_color(self, value: str) -> tuple:
+        
         if value == "0":
-            return ("white", "white38")
+            return ("white")
         if value == "1":
-            return ("yellow", "yellow38")
+            return ("yellow")
         if value == "2":
-           return ("green", "green38")
-        return ("grey", "grey38")
+           return ("green")
+        return ("grey")
