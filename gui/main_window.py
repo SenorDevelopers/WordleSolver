@@ -1,6 +1,7 @@
 from constants import WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, GRID_ROWS, GRID_COLS
-from models.main_window_state import MainWindowState
+from services.base_feedback_service import BaseFeedbackService
 from services.base_guess_service import BaseGuessService
+from models.main_window_state import MainWindowState
 import tkinter.messagebox
 import customtkinter
 import tkinter
@@ -9,10 +10,13 @@ customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue") 
 
 class MainWindow(customtkinter.CTk):
-    def __init__(self, state: MainWindowState, guess_service: BaseGuessService):
+    def __init__(self, state: MainWindowState, guess_service: BaseGuessService, feedback_service: BaseFeedbackService):
         super().__init__()
-        self.__state = state
+        
+        self.__feedback_service = feedback_service
         self.__guess_service = guess_service
+        self.__state = state
+        
         self.__configure_window()   
         self.__configure_grid_layout()  
         self.__configure_left_frame()
@@ -22,7 +26,7 @@ class MainWindow(customtkinter.CTk):
         self.title(WINDOW_TITLE)
         self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         self.resizable(False, False)
-        self.protocol("WM_DELETE_WINDOW", self.on_closing) 
+        self.protocol("WM_DELETE_WINDOW", self.__on_closing) 
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
@@ -41,13 +45,13 @@ class MainWindow(customtkinter.CTk):
         self.button_1 = customtkinter.CTkButton(master=self.frame_left,text="Reset Game",command=self.__reset)
         self.button_1.grid(row=2, column=0, pady=10, padx=20)
 
-        self.button_2 = customtkinter.CTkButton(master=self.frame_left,text="Next Guess",command=self.next_guess)
+        self.button_2 = customtkinter.CTkButton(master=self.frame_left,text="Next Guess",command=self.__next_guess)
         self.button_2.grid(row=3, column=0, pady=10, padx=20)
 
         self.label_mode = customtkinter.CTkLabel(master=self.frame_left, text="Appearance Mode:")
         self.label_mode.grid(row=9, column=0, pady=0, padx=20, sticky="w")
 
-        self.optionmenu_1 = customtkinter.CTkOptionMenu(master=self.frame_left,values=["Light", "Dark", "System"],command=self.change_appearance_mode)
+        self.optionmenu_1 = customtkinter.CTkOptionMenu(master=self.frame_left,values=["Light", "Dark", "System"],command=self.__change_appearance_mode)
         self.optionmenu_1.grid(row=10, column=0, pady=10, padx=20, sticky="w")
 
     def __configure_right_frame(self): 
@@ -84,27 +88,24 @@ class MainWindow(customtkinter.CTk):
         self.__state.reset()
         self.__update()
 
-    def next_guess(self):
-        if self.__state.get_current_iteration() == 0:
-            guess = self.__guess_service.get_opener()
-        else: 
-            guess = self.__guess_service.get_guess()
-        
-        self.__state.add_guess(guess)
-        if guess.guess_string == "THINK":
-            self.__state.add_pattern("10000")
-        elif guess.guess_string == "ABOUT":
-            self.__state.add_pattern("10001")
-        else: 
-            self.__state.add_pattern("22222")
-            
+    def __next_guess(self):
+        guess = self.__get_next_guess()
+        pattern = self.__feedback_service.calculate(answer=self.__state.get_word_to_guess(), word=guess.guess_string)
+       
+        self.__state.add_pattern(pattern)
+        self.__state.add_guess(guess)   
+         
         self.__update()
-        
+    
+    def __get_next_guess(self):
+        if self.__state.get_current_iteration() == 0:
+            return self.__guess_service.get_opener()
+        return self.__guess_service.get_guess(self.__state.get_last_pattern(), self.__state.get_last_guess_id())
 
-    def change_appearance_mode(self, new_appearance_mode):
+    def __change_appearance_mode(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
 
-    def on_closing(self):
+    def __on_closing(self):
         self.destroy()
 
     def __clear(self) -> None:

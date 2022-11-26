@@ -7,5 +7,5 @@ class BaseGuessService(ABC):
         pass 
     
     @abstractmethod
-    def get_guess(self) -> Guess:
+    def get_guess(self, pattern: str, prev_id: str) -> Guess:
         pass 

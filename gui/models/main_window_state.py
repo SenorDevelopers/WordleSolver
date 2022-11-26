@@ -28,3 +28,9 @@ class MainWindowState:
     
     def get_current_iteration(self) -> int: 
         return len(self.__guesses)
+    
+    def get_last_pattern(self) -> str: 
+        return "" if len(self.__patterns) == 0 else self.__patterns[-1]
+
+    def get_last_guess_id(self) -> str:
+       return "" if len(self.__guesses) == 0 else self.__guesses[-1].id

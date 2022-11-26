@@ -1,12 +1,12 @@
 from main_window import MainWindow 
 from models.main_window_state import MainWindowState
+from services.buggy_feedback_service import BuggyFeedbackService
 from services.hardcoded_guess_service import HardcodedGuessService
-from models.guess import Guess
+from services.http_guess_service import HttpGuessService
 
-# state = MainWindowState(word_to_guess="STATS", guesses=[Guess(id="", guess_string="THINK", is_opener=True),Guess(id="", guess_string="ABOUT", is_opener=False),Guess(id="", guess_string="STATS", is_opener=False)], patterns=["10000", "10001", "22222"])
-
-state = MainWindowState(word_to_guess="TAREI")
+state = MainWindowState(word_to_guess="STATS")
 guess_service = HardcodedGuessService()
+feedback_service = BuggyFeedbackService()
 
-window = MainWindow(state, guess_service)
+window = MainWindow(state, guess_service, feedback_service)
 window.mainloop()
