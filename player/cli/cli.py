@@ -14,6 +14,15 @@ class CLIApp:
         
         while running:
             guess = self.__get_next_guess()
+
+            if self.__determine_if_game_won(guess) == True or guess_count > 6:
+                if self.__determine_if_game_won(guess) == True:
+                    print("You won!")
+                else:
+                    print("You lost!")
+                running = False
+                break
+
             pattern = self.__feedback_service.calculate(answer=self.__state.get_word_to_guess(), word=guess.guess_string)
             
             print(f"Guess {guess_count}: {guess.guess_string}")
@@ -37,3 +46,8 @@ class CLIApp:
         if self.__state.get_current_iteration() == 0:
             return self.__guess_service.get_opener()
         return self.__guess_service.get_guess(self.__state.get_last_pattern(), self.__state.get_last_guess_id())
+
+    def __determine_if_game_won(self, guess) -> bool:
+        last_guess = guess
+        word_to_guess = self.__state.get_word_to_guess()
+        return last_guess == word_to_guess
