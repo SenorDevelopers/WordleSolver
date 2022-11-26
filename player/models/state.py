@@ -1,8 +1,7 @@
-from services.base_guess_service import BaseGuessService
 from models.guess import Guess
 
-class MainWindowState:
-    def __init__(self, word_to_guess: str, guesses: list[Guess] = [], patterns: list[str] = []) -> None:
+class State:
+    def __init__(self, word_to_guess: str = "", guesses: list[Guess] = [], patterns: list[str] = []) -> None:
         self.__word_to_guess = word_to_guess
         self.__guesses  = guesses
         self.__patterns = patterns
