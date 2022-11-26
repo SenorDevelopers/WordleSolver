@@ -4,7 +4,7 @@ from models.guess import Guess
 # for testing purposes only 
 class HardcodedGuessService(BaseGuessService):
     def __init__(self):
-        self.__guesses =  ["THINK", "ABOUT", "STATS"]
+        self.__guesses =  ["GITTY", "ABOUT", "MORAU", "STATS"]
         self.__counter = 1
     
     def get_opener(self) -> Guess:
