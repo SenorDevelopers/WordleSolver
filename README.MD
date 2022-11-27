@@ -1,11 +1,15 @@
-## Wordle Solver 
+## Wordle Solver (Buggy Version)
 
-![image](https://user-images.githubusercontent.com/43640455/204130277-b56b2a9a-a1bf-4242-abd8-23f316355bec.png)
+### Description:
 
-## Project Summary:
-The average of guesses is ```3.986```
+The method used to solve Wordle is inspired from a [video](https://www.youtube.com/watch?v=v68zYyaEmEA) made by 
+[3Blue1Brown](https://www.youtube.com/@3blue1brown). The approach is similar, use entropy to calculate the likelness of each word in the database using in-depth computing. 
 
-In ```solutions.txt``` you can find the gusses for each word in the database
+The average of guesses is ```3.986```. 
+
+In [`solutions.txt`](solutions.txt) you can find the gusses for each word in the database.
+
+<img src="https://user-images.githubusercontent.com/43640455/204130277-b56b2a9a-a1bf-4242-abd8-23f316355bec.png" />
 
 ## Technologies Used:
 For the development of this project we have used:
@@ -25,7 +29,7 @@ ASP.NET and web development(Visual Studio Extension)
 To skip the calculation process you can restore the database from Database.bak file
 ```
 
-### Client
+### Client:
 ```
 pip3 install customtkinter
 pip3 install requests
@@ -36,7 +40,7 @@ pip3 install requests
 ### API:
 ```
 1) open web api project folder
-2) dotnet run web-api.csproj
+2) dotnet run WebApi.csproj
 ```
 
 ### Client:
