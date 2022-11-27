@@ -1,13 +1,7 @@
 ## Wordle Solver 
 
 
-![image](https://user-images.githubusercontent.com/43640455/204058097-cae2ffbf-0739-40c7-9fb1-bb53ec6fe9de.png)
-
-### Team Members: 
-- Achim-Panescu Silvian  https://github.com/SilvianAchim (Grupa 152)
-- Apostol Ilie-Daniel https://github.com/apostoldaniel854 (Grupa 152)
-- Dinu Matei-Alexandru https://github.com/MatthewAlgo  (Grupa 152)
-- Scarlat Marius-Stefan https://github.com/marius004 (Grupa 152)
+![image](https://user-images.githubusercontent.com/43640455/204130277-b56b2a9a-a1bf-4242-abd8-23f316355bec.png)
 
 ## Project Summary:
 The average of guesses is ```3.986```
@@ -15,7 +9,10 @@ The average of guesses is ```3.986```
 In ```solutions.txt``` you can find the gusses for each word in the database
 
 ## Technologies Used:
-For the development of this project we have used .NET CORE for the API, and python for the player
+For the development of this project we have used:
+- ASP.NET for the API
+- Python for the Player
+
 ## Installation Guide:
 
 ### API:
@@ -41,10 +38,6 @@ pip3 install requests
 ```
 1) open web api project folder
 2) dotnet run web-api.csproj
-
-have the web api running:
-dotnet run WebApi.csproj
-
 ```
 
 ### Client:
@@ -57,6 +50,12 @@ python3 main.py --cli
 # run in gui mode:
 python3 main.py --gui
 ```
+
+### Team Members: 
+- Achim-Panescu Silvian  https://github.com/SilvianAchim (Grupa 152)
+- Apostol Ilie-Daniel https://github.com/apostoldaniel854 (Grupa 152)
+- Dinu Matei-Alexandru https://github.com/MatthewAlgo  (Grupa 152)
+- Scarlat Marius-Stefan https://github.com/marius004 (Grupa 152)
 
 ### Bibliography:
 - [Solving Wordle using information theory](https://www.youtube.com/watch?v=v68zYyaEmEA) (3Blue1Brown)
