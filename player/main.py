@@ -7,8 +7,8 @@ from cli.parser import CLIParser
 from models.state import State
 
 # for testing only
-# guess_service = HardcodedGuessService()
-guess_service = HttpGuessService()
+guess_service = HardcodedGuessService()
+# guess_service = HttpGuessService()
 feedback_service = BuggyFeedbackService()
    
 if CLIParser().parse().gui:
