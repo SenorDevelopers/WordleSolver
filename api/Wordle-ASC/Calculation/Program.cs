@@ -1,5 +1,6 @@
 ﻿using Calculation.Services;
 using Database;
+using Model.Models;
 
 namespace Calculation;
 
@@ -13,7 +14,7 @@ public class Program
 		var calculateOpeners = new CalculateOpeners();
 
 		await calculateOpeners.CalculateAsync();
-		await calculateOpeners.CalculateAsync(1, true);
+		await calculateOpeners.CalculateAsync(Constants.DEPTH_SEARCH, true);
 
 		var calculateGuesses = new CalculateGuesses();
 
