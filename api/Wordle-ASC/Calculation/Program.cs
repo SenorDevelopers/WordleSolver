@@ -7,12 +7,12 @@ public class Program
 {
 	public static async Task FullFlow()
 	{
-		//await Helper.AddWordsToDatabaseAsync("cuvinte_wordle.txt");
+		await Helper.AddWordsToDatabaseAsync("cuvinte_wordle.txt");
 
 		var uoW = new UoW();
 		var calculateOpeners = new CalculateOpeners();
 
-		//await calculateOpeners.CalculateAsync();
+		await calculateOpeners.CalculateAsync();
 		await calculateOpeners.CalculateAsync(1, true);
 
 		var calculateGuesses = new CalculateGuesses();
