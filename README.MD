@@ -1,6 +1,5 @@
 ## Wordle Solver 
 
-
 ![image](https://user-images.githubusercontent.com/43640455/204130277-b56b2a9a-a1bf-4242-abd8-23f316355bec.png)
 
 ## Project Summary:
