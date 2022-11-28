@@ -13,7 +13,7 @@ In [`solutions.txt`](solutions.txt) you can find the gusses for each word in the
 
 ## Technologies Used:
 For the development of this project we have used:
-- SQL Server fot the database
+- SQL Server for the database
 - ASP.NET for the API
 - Python for the Player
 
