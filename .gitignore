@@ -38,3 +38,4 @@ _ReSharper*/
 #Nuget packages folder
 packages/
 orders/
+script.py
