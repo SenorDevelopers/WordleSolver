@@ -3,7 +3,7 @@
 ### Description:
 
 The method used to solve Wordle is inspired from a [video](https://www.youtube.com/watch?v=v68zYyaEmEA) made by 
-[3Blue1Brown](https://www.youtube.com/@3blue1brown). The approach is similar, use entropy to calculate the likelness of each word in the database using in-depth computing. 
+[3Blue1Brown](https://www.youtube.com/@3blue1brown). The approach is similar, use entropy to calculate the likeliness of each word in the database using in-depth computing. 
 
 The average of guesses is ```3.986```. 
 
